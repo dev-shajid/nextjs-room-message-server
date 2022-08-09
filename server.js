@@ -4,7 +4,7 @@ const port = process.env.PORT || 8000
 require('dotenv').config()
 const io = require('socket.io')(server, {
     cors: {
-        origin: process.env.CLIENT,
+        origin: process.env.CLIENT || 'http://localhost:3000',
         methods: ["GET", "POST"]
     }
 })
@@ -52,6 +52,9 @@ io.on('connection', (socket) => {
         socket.broadcast.to(room).emit('notification')
     });
 
+    socket.on('typing',({name, room, typing})=>{
+        socket.broadcast.to(room).emit('typing',{name, room, typing})
+    })
 
     socket.on("disconnect", () => {
         console.log(socket.id, 'disconect');
